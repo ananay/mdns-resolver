@@ -3,7 +3,7 @@
 import * as util from 'util';
 import * as MDNS from 'multicast-dns';
 
-const resolver = (hostname: string, rrtype: 'A'|'AAAA'|'PTR'|'TXT'|'SRV'|'HINFO', callback: Function, timeout: number, retryInterval: number) => {
+const resolver = (hostname: string, rrtype: 'A'|'AAAA'|'PTR'|'TXT'|'SRV'|'HINFO', timeout: number, retryInterval: number, callback: Function) => {
   const mdns = MDNS();
 
   if (hostname.charAt(hostname.length - 1) === '.') {
@@ -49,11 +49,11 @@ const resolver = (hostname: string, rrtype: 'A'|'AAAA'|'PTR'|'TXT'|'SRV'|'HINFO'
 };
 
 export const resolve = util.promisify(resolver) as
-  (hostname: string, rrtype: 'A' | 'AAAA' | 'PTR' | 'TXT' | 'SRV' | 'HINFO') => Promise<string>;
+  (hostname: string, rrtype: 'A' | 'AAAA' | 'PTR' | 'TXT' | 'SRV' | 'HINFO', timeout: number, retryInterval: number) => Promise<string>;
 
-export const resolve4 = (hostname: string) => resolve(hostname, 'A');
-export const resolve6 = (hostname: string) => resolve(hostname, 'AAAA');
-export const resolvePtr = (hostname: string) => resolve(hostname, 'PTR');
-export const resolveTxt = (hostname: string) => resolve(hostname, 'TXT');
-export const resolveSrv = (hostname: string) => resolve(hostname, 'SRV');
-export const resolveHinfo = (hostname: string) => resolve(hostname, 'HINFO');
+export const resolve4 = (hostname: string, timeout: number, retryInterval: number) => resolve(hostname, 'A', timeout, retryInterval);
+export const resolve6 = (hostname: string, timeout: number, retryInterval: number) => resolve(hostname, 'AAAA', timeout, retryInterval);
+export const resolvePtr = (hostname: string, timeout: number, retryInterval: number) => resolve(hostname, 'PTR', timeout, retryInterval);
+export const resolveTxt = (hostname: string, timeout: number, retryInterval: number) => resolve(hostname, 'TXT', timeout, retryInterval);
+export const resolveSrv = (hostname: string, timeout: number, retryInterval: number) => resolve(hostname, 'SRV', timeout, retryInterval);
+export const resolveHinfo = (hostname: string, timeout: number, retryInterval: number) => resolve(hostname, 'HINFO', timeout, retryInterval);
