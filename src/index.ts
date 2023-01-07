@@ -3,7 +3,7 @@
 import * as util from 'util';
 import * as MDNS from 'multicast-dns';
 
-const resolver = (hostname: string, rrtype: 'A'|'AAAA'|'PTR'|'TXT'|'SRV'|'HINFO', callback: Function) => {
+const resolver = (hostname: string, rrtype: 'A'|'AAAA'|'PTR'|'TXT'|'SRV'|'HINFO', callback: Function, timeout: number, retryInterval: number) => {
   const mdns = MDNS();
 
   if (hostname.charAt(hostname.length - 1) === '.') {
@@ -18,11 +18,11 @@ const resolver = (hostname: string, rrtype: 'A'|'AAAA'|'PTR'|'TXT'|'SRV'|'HINFO'
     mdns.destroy();
 
     callback(new Error(`Could not resolve ${hostname} - Query Timed Out`));
-  }, 3000);
+  }, timeout);
 
   const retryHandler = setInterval(() => {
     mdns.query(hostname, rrtype);
-  }, 500);
+  }, retryInterval);
 
   const responseHandler = (response) => {
     const cname = response.answers.find(x => x.name === hostname && x.type === 'CNAME');
